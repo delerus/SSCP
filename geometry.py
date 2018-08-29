@@ -79,7 +79,7 @@ class left_ventrical_geometry():
         if path is None:
             path = "Files/coronary_pressure.csv"
 
-        df = pd.read_csv(path,names='ti','pre')
+        df = pd.read_csv(path,names=['ti','pre'])
 
         if unit == 'mmHg':
             self.pressure = np.array(df['pre'])
