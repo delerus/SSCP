@@ -25,8 +25,8 @@ class left_ventrical_geometry():
             self.D = Constant(diff_02)
             self.k = Constant(dt)
 
-            R_12 = Constant(1)
-            R_23 = Constant(1)
+            self.R_12 = Constant(1)
+            self.R_23 = Constant(1)
 
         self.set_mesh()
 
