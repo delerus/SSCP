@@ -69,3 +69,22 @@ class left_ventrical_geometry():
             f = XDMFFile(self.mesh.mpi_comm(),"Files/pressure_mesh.xdmf")
             f.read(self.mesh)
             f.close()
+
+
+    def set_applied_pressure(self,path=None,unit = 'mmHg'):
+        """
+        Sets the pressure to be aplied as a boundry condition to or geometry
+        """
+
+        if path is None:
+            path = "Files/coronary_pressure.csv"
+
+        df = pd.read_csv(path,names='ti','pre')
+
+        if unit == 'mmHg':
+            self.pressure = np.array(df['pre'])
+            self.pressure = self.pressure * 0.133322368 #Converting to kPa
+
+        elif unit =='kPa':
+            self.pressure = np.array(df['pre'])
+
