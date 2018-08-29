@@ -12,8 +12,6 @@ def test_set_mesh():
     
     geo = left_ventrical_geometry()
     print(geo.mesh)
-    plot(geo.mesh)
 
 
-test_set_mesh()
-print(type(str(time())))
+
