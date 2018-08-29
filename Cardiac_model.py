@@ -28,11 +28,13 @@ class left_ventrical_geometry():
             R_12 = Constant(1)
             R_23 = Constant(1)
 
-        self.mesh = self.set_mesh()
+        self.set_mesh()
 
     def set_param(defult=True):
-
-        if param is True:
+        """
+        Setting the parameters of the model
+        """
+        if default:
         
             dt = 0.02
             diff_02 = 10**-5
