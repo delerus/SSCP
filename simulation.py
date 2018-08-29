@@ -53,9 +53,9 @@ class Simulate():
 
     def open_save_files(self):
         timestamp = time.time()
-        p1_name ='Results/Perfusion/p1'+str(timestamp)
-        p2_name ='Results/Perfusion/p2'+str(timestamp)
-        p3_name ='Results/Perfusion/p3'+str(timestamp)
+        p1_name ='Results/Perfusion/p1'+str(timestamp)+'.xdmf'
+        p2_name ='Results/Perfusion/p2'+str(timestamp)+'.xdmf'
+        p3_name ='Results/Perfusion/p3'+str(timestamp)+'.xdmf'
 
         self.xdmffile_p1 = XDMFFile(self.mod.geo.mesh.mpi_comm(), p1_name)
         self.xdmffile_p2 = XDMFFile(self.mod.geo.mesh.mpi_comm(), p2_name)
