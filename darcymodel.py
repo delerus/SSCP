@@ -20,14 +20,14 @@ class darcy_model():
     def function_space(self):
 
         self.el = tetrahedron
-        self.P = FiniteElement('P',el,2)
+        self.P = FiniteElement('P',self.el,2)
 
-        self.element = MixedElement([P,P,P])
-        self.FS = FunctionSpace(mesh,element)
+        self.element = MixedElement([self.P,self.P,self.P])
+        self.FS = FunctionSpace(self.geo.mesh,self.element)
 
     def test_functions(self):
 
-        self.q1,self.q2,self.q3 = TestFunctions(FS)
+        self.q1,self.q2,self.q3 = TestFunctions(self.FS)
     
     def funcs(self):
 
@@ -50,15 +50,15 @@ class darcy_model():
         S: Sink term
         """
         
-        A1 = -self.geo.K1 * dot(grad(self.p1),grad(self.q1))*dx
-        A2 = -self.geo.K2 * dot(grad(self.p2),grad(self.q2))*dx
-        A3 = -self.geo.K3 * dot(grad(self.p3),grad(self.q3))*dx
+        A1 = -self.geo.k1 * dot(grad(self.p1),grad(self.q1))*dx
+        A2 = -self.geo.k2 * dot(grad(self.p2),grad(self.q2))*dx
+        A3 = -self.geo.k3 * dot(grad(self.p3),grad(self.q3))*dx
 
-        B1 = dot(self.geo.beta12*(p1-p2),q1)*dx + dot(self.geo.beta12*(p2-p1),q2)*dx
-        B2 = dot(self.geo.beta23*(p2-p3),q2)*dx + dot(self.geo.beta23*(p3-p2),q3)*dx
+        B1 = dot(self.geo.beta12*(self.p1-self.p2),self.q1)*dx + dot(self.geo.beta12*(self.p2-self.p1),self.q2)*dx
+        B2 = dot(self.geo.beta23*(self.p2-self.p3),self.q2)*dx + dot(self.geo.beta23*(self.p3-self.p2),self.q3)*dx
 
-        S = - Constant(0.1)*(p3-Constant(3.0))
+        S = - Constant(0.1)*(self.p3-Constant(3.0))
 
-        self.F = A1+A2+A3+B1+B2+S
+        self.F = A1+A2+A3+B1+B2+dot(S,self.q3)*dx
 
 

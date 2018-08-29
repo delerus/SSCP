@@ -8,7 +8,7 @@ from scipy.interpolate import interp1d
 
 class left_ventrical_geometry():
 
-    def __init__(self,param=None):
+    def __init__(self,param=None,):
 
         if param is None:
 
@@ -29,6 +29,8 @@ class left_ventrical_geometry():
             self.R_23 = Constant(1)
 
         self.set_mesh()
+        self.set_markers()
+        self.set_applied_pressure()
 
     def set_param(defult=True):
         """
@@ -70,6 +72,10 @@ class left_ventrical_geometry():
             f.read(self.mesh)
             f.close()
 
+
+    def set_markers(self):
+
+        self.markers = MeshFunction("size_t",self.mesh,"Files/pressure_markers.xml")
 
     def set_applied_pressure(self,path=None,unit = 'mmHg'):
         """
