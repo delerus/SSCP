@@ -12,8 +12,11 @@ class darcy_model():
         
         if geo is None:
             self.geo = left_ventrical_geometry()
+        self.function_space()
+        self.test_functions()
+        self.funcs()
+        self.multi_comp_darcy_equation()
 
-   
     def function_space(self):
 
         self.el = tetrahedron
