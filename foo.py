@@ -1,5 +1,5 @@
 from simulation import Simulate
 
-sim = Simulate()
+sim = Simulate(save=True)
 
 sim.simulate()

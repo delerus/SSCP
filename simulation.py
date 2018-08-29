@@ -12,10 +12,16 @@ from mshr import *
 from darcymodel import darcy_model
 from scipy.interpolate import interp1d
 import numpy as np
+import time
+
+parameters['allow_extrapolation'] = True
+WARNING = 30
+set_log_level(WARNING)
+
 
 class Simulate():
 
-    def __init__(self,model='perfusion',n_step=50,save=True,n_cycles=1):
+    def __init__(self,model='perfusion',n_step=50,save=False,n_cycles=1):
 
         self.model = model
         self.n_step = n_step 
@@ -27,7 +33,8 @@ class Simulate():
 
         self.set_timesteps()
         self.set_pressure()
-        
+        self.save = save
+
     def set_timesteps(self):
         """
         Sets timesteps that will be run trough by the simulation
@@ -44,10 +51,39 @@ class Simulate():
         self.pD = Expression("p",p=0.0,degree=2)
         self.bc = DirichletBC(self.mod.FS.sub(0),self.pD,self.mod.geo.markers,1)
 
+    def open_save_files(self):
+        timestamp = time.time()
+        p1_name ='Results/Perfusion/p1'+str(timestamp)
+        p2_name ='Results/Perfusion/p2'+str(timestamp)
+        p3_name ='Results/Perfusion/p3'+str(timestamp)
+
+        self.xdmffile_p1 = XDMFFile(self.mod.geo.mesh.mpi_comm(), p1_name)
+        self.xdmffile_p2 = XDMFFile(self.mod.geo.mesh.mpi_comm(), p2_name)
+        self.xdmffile_p3 = XDMFFile(self.mod.geo.mesh.mpi_comm(), p3_name)
+    
+    def save_files(self,p,t):
+
+        p1,p2,p3 = p.split()
+        self.xdmffile_p1.write(p1,t)
+        self.xdmffile_p2.write(p2,t)
+        self.xdmffile_p3.write(p3,t)
+
+    def close_save_files(self):
+        
+        self.xdmffile_p1.close()
+        self.xdmffile_p2.close()
+        self.xdmffile_p3.close()
+
     def simulate(self):
+        if self.save:
+            self.open_save_files()
         if self.model == 'perfusion':
             for t,init_p in zip(self.timesteps,self.pressure):
-                
+                print(t)
                 self.pD.p = init_p
                 solve(self.mod.F==0, self.mod.p, self.bc)
 
+                if self.save:
+                    self.save_files(self.mod.p,t)
+        if self.save:
+            self.close_save_files
