@@ -43,7 +43,8 @@ class darcy_model():
         A3 = -self.geo.K3 * dot(grad(self.p3),grad(self.q3))*dx
 
         B1 = dot(self.geo.beta12*(p1-p2),q1)*dx + dot(self.geo.beta12*(p2-p1),q2)*dx
-        B2 = dot(self.geo.beta23*(p2-p3,q2)*dx + dot(self.geo.beta23*(p3-p2),q3)*dx
-        pass
+        B2 = dot(self.geo.beta23*(p2-p3),q2)*dx + dot(self.geo.beta23*(p3-p2),q3)*dx
+
+        self.F = A1+A2+A3+B1+B2
 
 
