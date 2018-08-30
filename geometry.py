@@ -6,7 +6,12 @@ from scipy.interpolate import interp1d
 
 
 
-class left_ventrical_geometry():
+class Unit_cube():
+
+    pass
+
+
+class Left_ventrical_geometry():
 
     def __init__(self,param=None,):
 
