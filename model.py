@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from geometry import left_ventrical_geometry
 
-class darcy_model():
+class perfusion_model():
     """
     This class is gonna include the equations (Maths) and also the definitions of functionspaces etc.
     """

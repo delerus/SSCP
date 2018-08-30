@@ -9,7 +9,7 @@ Things i want this class to handle:
 """
 from fenics import *
 from mshr import *
-from darcymodel import darcy_model
+from model import perfusion_model
 from scipy.interpolate import interp1d
 import numpy as np
 import time
@@ -26,7 +26,7 @@ class Simulate():
         self.model = model
         self.n_step = n_step 
         if model == 'perfusion':
-            self.mod = darcy_model()
+            self.mod = perfusion_model()
             self.set_boundry_perfusion()
         self.save=save
         self.n_cycles=n_cycles
