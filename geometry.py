@@ -5,13 +5,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 
-
-class Unit_cube():
-
-    pass
-
-
-class Left_ventrical_geometry():
+class Left_ventrical_geometry:
 
     def __init__(self,param=None,):
 

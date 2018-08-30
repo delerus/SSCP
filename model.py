@@ -2,7 +2,7 @@ from fenics import *
 from mshr import *
 import numpy as np
 import matplotlib.pyplot as plt
-from geometry import left_ventrical_geometry
+from geometry import Left_ventrical_geometry
 
 class Perfusion_model:
     """
@@ -11,7 +11,7 @@ class Perfusion_model:
     def __init__(self,geo=None):
         
         if geo is None:
-            self.geo = left_ventrical_geometry()
+            self.geo = Left_ventrical_geometry()
         self.function_space()
         self.test_functions()
         self.funcs()
@@ -61,12 +61,12 @@ class Perfusion_model:
 
         self.F = A1+A2+A3+B1+B2+dot(S,self.q3)*dx
 
-class Advection_diffusion:
+class Advection_diffusion_model:
     
     def __init__(self,geo=None):
 
         if geo is None:
-            self.geo = left_ventrical_geometry()
+            self.geo = Left_ventrical_geometry()
         self.function_space()
         self.test_functions()
         self.funcs()
@@ -94,7 +94,7 @@ class Advection_diffusion:
 
         self.p = Function(self.FS)
 
-        self.vd1 = Function(self.FS)i #Darcy Velocity
+        self.vd1 = Function(self.FS) #Darcy Velocity
         self.vd2 = Function(self.FS)
         self.vd3 = Function(self.FS)
 
@@ -103,7 +103,7 @@ class Advection_diffusion:
 
         self.p1, self.p2, self.p3 = split(self.p)
         self.c1, self.c2, self.c3 = split(self.c)
-        self.c_n1,self.c_n2,self.c_n3 = split(c_n)
+        self.c_n1,self.c_n2,self.c_n3 = split(self.c_n)
 
 
     def multi_comp_darcy_equation(self):
@@ -135,8 +135,8 @@ class Advection_diffusion:
         R1: Tranfers consentration from comp1->2
         R2: Tranfers consentration from comp2->3
         """
-        R1 = geo.R_12*self.c1*(self.v1-self.v2)*dx
-        R2 = geo.R_23*self.c2*(self.v2-self.v3)*dx
+        R1 = self.geo.R_12*self.c1*(self.v1-self.v2)*dx
+        R2 = self.geo.R_23*self.c2*(self.v2-self.v3)*dx
 
         self.F3 = R1+R2
 
@@ -151,17 +151,25 @@ class Advection_diffusion:
         OBS, k not defined(dt)
         """
 
-        C1 = ((self.c1 - self.c_n1)/geo.k)*self.v1*dx
-        C2 = ((self.c2 - self.c_n2)/geo.k)*self.v2*dx
-        C3 = ((self.c3 - self.c_n3)/geo.k)*self.v3*dx
+        C1 = ((self.c1 - self.c_n1)/self.geo.k)*self.v1*dx
+        C2 = ((self.c2 - self.c_n2)/self.geo.k)*self.v2*dx
+        C3 = ((self.c3 - self.c_n3)/self.geo.k)*self.v3*dx
 
         D1 = dot(self.vd1,grad(self.c1))*self.v1*dx
         D2 = dot(self.vd2,grad(self.c2))*self.v2*dx
         D3 = dot(self.vd3,grad(self.c3))*self.v3*dx
 
-        E1 = -geo.D*dot(grad(self.c1),grad(self.v1))*dx
-        E2 = -geo.D*dot(grad(self.c2),grad(self.v2))*dx
-        E3 = -geo.D*dot(grad(self.c3),grad(self.v3))*dx
+        E1 = -self.geo.D*dot(grad(self.c1),grad(self.v1))*dx
+        E2 = -self.geo.D*dot(grad(self.c2),grad(self.v2))*dx
+        E3 = -self.geo.D*dot(grad(self.c3),grad(self.v3))*dx
 
         self.F2 = C1+C2+C3+D1+D2+D3+E1+E2+E3
-
+    
+    def calculate_velocity(self):
+       
+        vd1_ = project(-self.geo.k1 *  grad(self.p1))
+        self.vd1.assign(vd1_)
+        vd2_ = project(-self.geo.k2*grad(self.p2))
+        self.vd2.assign(vd2_)
+        vd3_ = project(-self.geo.k3 * grad(self.p3))
+        self.vd3.assign(vd3_)
