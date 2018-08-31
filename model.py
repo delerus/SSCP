@@ -135,10 +135,12 @@ class Advection_diffusion_model:
         R1: Tranfers consentration from comp1->2
         R2: Tranfers consentration from comp2->3
         """
-        R1 = self.geo.R_12*self.c1*(self.v1-self.v2)*dx
-        R2 = self.geo.R_23*self.c2*(self.v2-self.v3)*dx
+        R1 = self.geo.R_12*self.c1*self.v1*dx
+        R2 = - self.geo.R_12*self.c1*self.v2*dx
+        R3 = self.geo.R_23*self.c2*self.v2*dx
+        R4 = - self.geo.R_23*self.c2*self.v3*dx
 
-        self.F3 = R1+R2
+        self.F3 = R1+R2+R3+R4
 
 
     def advection_diffusion_equation(self):

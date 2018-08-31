@@ -143,14 +143,19 @@ class Simulate:
     def simulate_advection_diffusion(self):
         if self.save:
             self.open_save_files(p=True,v=True,c=True)
+            c_0 = 1.0
+            initc = DirichletBC(self.mod.FSC.sub(0),c_0,self.mod.geo.markers,1)
+            initc.apply(self.mod.c_n.vector())
         if self.model == 'advection_diffusion':
             for t,init_p in zip(self.timesteps,self.pressure):
                 print(t)
                 self.pD.p = init_p
                 solve(self.mod.F==0, self.mod.p, self.bc)
                 self.mod.calculate_velocity()
-                solve(self.mod.F3==0, self.mod.c)
-                solve(self.mod.F2==0, self.mod.c)
+#                solve(self.mod.F3==0, self.mod.c)
+#                self.mod.c_n.assign(self.mod.c)
+                solve(self.mod.F2+self.mod.F3==0, self.mod.c)
+                self.mod.c_n.assign(self.mod.c)
                 if self.save:
                     self.save_files(t,p=True,v=True,c=True)
         if self.save:
