@@ -7,51 +7,28 @@ from scipy.interpolate import interp1d
 
 class Left_ventrical_geometry:
 
-    def __init__(self,param=None,):
+    def __init__(self,param=None):
 
+        
         if param is None:
-
-            dt = 0.02
-            diff_02 = 10**-5
-
-            self.k1 = Constant(0.5) # Permability Constant in comp 1
-            self.k2 = Constant(5) # Permability Constant in comp 2
-            self.k3 = Constant(10) # Permability Constant in comp 3
-
-            self.beta12 = Constant(0.02) #Intercompartment permability
-            self.beta23 = Constant(0.05) #Intercompartment permability
-
-            self.D = Constant(diff_02)
-            self.k = Constant(dt)
-
-            self.R_12 = Constant(1)
-            self.R_23 = Constant(1)
-
+            self.set_param(param)
         self.set_mesh()
         self.set_markers()
         self.set_applied_pressure()
 
-    def set_param(defult=True):
+    def set_param(self,param=None):
         """
         Setting the parameters of the model
         """
-        if default:
         
-            dt = 0.02
-            diff_02 = 10**-5
-
-            self.k1 = Constant(0.5) # Permability Constant in comp 1
-            self.k2 = Constant(5) # Permability Constant in comp 2
-            self.k3 = Constant(10) # Permability Constant in comp 3
-
-            self.beta12 = Constant(0.02) #Intercompartment permability
-            self.beta23 = Constant(0.05) #Intercompartment permability
-
-            self.D = Constant(diff_02)
-            self.k = Constant(dt)
-
-            R_12 = Constant(1)
-            R_23 = Constant(1)
+        if param:
+            for k in param:
+                setattr(self,k,Constant(param[k]))
+    
+        else:
+            param = {'k':0.02, 'D':10**-5, 'k1':0.5, 'k2':5, 'k3':10, 'beta12':0.02, 'beta23':0.05, 'R_12':1,'R_23':1}
+            for k in param:
+                setattr(self,k,Constant(param[k]))
 
 
     def set_mesh(self,mesh_path=None):
