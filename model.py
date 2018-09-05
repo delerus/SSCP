@@ -18,6 +18,21 @@ class Perfusion:
         self.funcs()
         self.multi_comp_darcy_equation()
 
+
+    def set_param(self,param=None):
+        """
+        Setting the parameters of the model, if none parameters is introduced, it sets the default.
+        """
+        
+        if param:
+            for k in param:
+                setattr(self,k,Constant(param[k]))
+    
+        else:
+            param = {'k':0.02, 'D':10**-5, 'K1':0.5, 'k2':5, 'k3':10, 'beta12':0.02, 'beta23':0.05, 'R_12':1,'R_23':1}
+            for k in param:
+                setattr(self,k,Constant(param[k]))
+
     def function_space(self):
 
         self.el = tetrahedron
@@ -51,12 +66,12 @@ class Perfusion:
         S: Sink term
         """
         
-        A1 = -self.geo.k1 * dot(grad(self.p1),grad(self.q1))*dx
-        A2 = -self.geo.k2 * dot(grad(self.p2),grad(self.q2))*dx
-        A3 = -self.geo.k3 * dot(grad(self.p3),grad(self.q3))*dx
+        A1 = -self.K1 * dot(grad(self.p1),grad(self.q1))*dx
+        A2 = -self.K2 * dot(grad(self.p2),grad(self.q2))*dx
+        A3 = -self.K3 * dot(grad(self.p3),grad(self.q3))*dx
 
-        B1 = dot(self.geo.beta12*(self.p1-self.p2),self.q1)*dx + dot(self.geo.beta12*(self.p2-self.p1),self.q2)*dx
-        B2 = dot(self.geo.beta23*(self.p2-self.p3),self.q2)*dx + dot(self.geo.beta23*(self.p3-self.p2),self.q3)*dx
+        B1 = dot(self.beta12*(self.p1-self.p2),self.q1)*dx + dot(self.beta12*(self.p2-self.p1),self.q2)*dx
+        B2 = dot(self.beta23*(self.p2-self.p3),self.q2)*dx + dot(self.beta23*(self.p3-self.p2),self.q3)*dx
 
         S = - Constant(0.1)*(self.p3-Constant(3.0))
 
@@ -118,12 +133,12 @@ class Advection_diffusion:
         S: Sink term
         """
         
-        A1 = -self.geo.k1 * dot(grad(self.p1),grad(self.q1))*dx
-        A2 = -self.geo.k2 * dot(grad(self.p2),grad(self.q2))*dx
-        A3 = -self.geo.k3 * dot(grad(self.p3),grad(self.q3))*dx
+        A1 = -self.K1 * dot(grad(self.p1),grad(self.q1))*dx
+        A2 = -self.K2 * dot(grad(self.p2),grad(self.q2))*dx
+        A3 = -self.K3 * dot(grad(self.p3),grad(self.q3))*dx
 
-        B1 = dot(self.geo.beta12*(self.p1-self.p2),self.q1)*dx + dot(self.geo.beta12*(self.p2-self.p1),self.q2)*dx
-        B2 = dot(self.geo.beta23*(self.p2-self.p3),self.q2)*dx + dot(self.geo.beta23*(self.p3-self.p2),self.q3)*dx
+        B1 = dot(self.beta12*(self.p1-self.p2),self.q1)*dx + dot(self.beta12*(self.p2-self.p1),self.q2)*dx
+        B2 = dot(self.beta23*(self.p2-self.p3),self.q2)*dx + dot(self.beta23*(self.p3-self.p2),self.q3)*dx
 
         S = - Constant(0.1)*(self.p3-Constant(3.0))
 
@@ -136,10 +151,10 @@ class Advection_diffusion:
         R1: Tranfers consentration from comp1->2
         R2: Tranfers consentration from comp2->3
         """
-        R1 = self.geo.R_12*self.c1*self.v1*dx
-        R2 = - self.geo.R_12*self.c1*self.v2*dx
-        R3 = self.geo.R_23*self.c2*self.v2*dx
-        R4 = - self.geo.R_23*self.c2*self.v3*dx
+        R1 = self.R_12*self.c1*self.v1*dx
+        R2 = - self.R_12*self.c1*self.v2*dx
+        R3 = self.R_23*self.c2*self.v2*dx
+        R4 = - self.R_23*self.c2*self.v3*dx
 
         self.F3 = R1+R2+R3+R4
 
@@ -154,25 +169,25 @@ class Advection_diffusion:
         OBS, k not defined(dt)
         """
 
-        C1 = ((self.c1 - self.c_n1)/self.geo.k)*self.v1*dx
-        C2 = ((self.c2 - self.c_n2)/self.geo.k)*self.v2*dx
-        C3 = ((self.c3 - self.c_n3)/self.geo.k)*self.v3*dx
+        C1 = ((self.c1 - self.c_n1)/self.k)*self.v1*dx
+        C2 = ((self.c2 - self.c_n2)/self.k)*self.v2*dx
+        C3 = ((self.c3 - self.c_n3)/self.k)*self.v3*dx
 
         D1 = dot(self.vd1,grad(self.c1))*self.v1*dx
         D2 = dot(self.vd2,grad(self.c2))*self.v2*dx
         D3 = dot(self.vd3,grad(self.c3))*self.v3*dx
 
-        E1 = -self.geo.D*dot(grad(self.c1),grad(self.v1))*dx
-        E2 = -self.geo.D*dot(grad(self.c2),grad(self.v2))*dx
-        E3 = -self.geo.D*dot(grad(self.c3),grad(self.v3))*dx
+        E1 = -self.D*dot(grad(self.c1),grad(self.v1))*dx
+        E2 = -self.D*dot(grad(self.c2),grad(self.v2))*dx
+        E3 = -self.D*dot(grad(self.c3),grad(self.v3))*dx
 
         self.F2 = C1+C2+C3+D1+D2+D3+E1+E2+E3
     
     def calculate_velocity(self):
        
-        vd1_ = project(-self.geo.k1 *  grad(self.p1))
+        vd1_ = project(-self.K1 *  grad(self.p1))
         self.vd1.assign(vd1_)
-        vd2_ = project(-self.geo.k2*grad(self.p2))
+        vd2_ = project(-self.K2*grad(self.p2))
         self.vd2.assign(vd2_)
-        vd3_ = project(-self.geo.k3 * grad(self.p3))
+        vd3_ = project(-self.K3 * grad(self.p3))
         self.vd3.assign(vd3_)

@@ -19,20 +19,6 @@ class Left_ventrical_geometry:
         self.set_markers()
         self.set_applied_pressure()
 
-    def set_param(self,param=None):
-        """
-        Setting the parameters of the model, if none parameters is introduced, it sets the default.
-        """
-        
-        if param:
-            for k in param:
-                setattr(self,k,Constant(param[k]))
-    
-        else:
-            param = {'k':0.02, 'D':10**-5, 'k1':0.5, 'k2':5, 'k3':10, 'beta12':0.02, 'beta23':0.05, 'R_12':1,'R_23':1}
-            for k in param:
-                setattr(self,k,Constant(param[k]))
-
 
     def set_mesh(self,mesh_path=None):
         """
