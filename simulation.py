@@ -10,8 +10,8 @@ Things i want this class to handle:
 
 from fenics import *
 from mshr import *
-from model import Perfusion_model
-from model import Advection_diffusion_model
+from model import Perfusion
+from model import Advection_diffusion
 from scipy.interpolate import interp1d
 import numpy as np
 import time
@@ -36,10 +36,10 @@ class Simulate:
 
         if model == 'perfusion':
             print('perfusion er valgt')
-            self.mod = Perfusion_model()
+            self.mod = Perfusion()
         elif model == 'advection_diffusion':
             print('advection_diffusion valgt')
-            self.mod = Advection_diffusion_model()
+            self.mod = Advection_diffusion()
 
         self.set_boundry_perfusion()
         self.set_timesteps()
