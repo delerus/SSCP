@@ -4,10 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from geometry import Left_ventrical_geometry
 
-class Perfusion_model:
+class Perfusion:
     """
-    This class is gonna include the equations (Maths) and also the definitions of functionspaces etc.
+    This class contains the multiperfusion darcy model
     """
+
     def __init__(self,geo=None):
         
         if geo is None:
@@ -61,7 +62,7 @@ class Perfusion_model:
 
         self.F = A1+A2+A3+B1+B2+dot(S,self.q3)*dx
 
-class Advection_diffusion_model:
+class Advection_diffusion:
     
     def __init__(self,geo=None):
 
