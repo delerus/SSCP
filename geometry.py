@@ -55,7 +55,7 @@ class Left_ventrical_geometry:
 
     def set_applied_pressure(self,path=None,unit = 'mmHg'):
         """
-        Sets the pressure to be aplied as a boundry condition to or geometry
+        Sets the pressure to be aplied as a boundry condition to the geometry
         """
 
         if path is None:
