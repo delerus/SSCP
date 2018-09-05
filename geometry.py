@@ -6,6 +6,9 @@ from scipy.interpolate import interp1d
 
 
 class Left_ventrical_geometry:
+    """
+    Sets up a left ventrical geometry, used to run simulations in SSCP
+    """
 
     def __init__(self,param=None):
 
@@ -18,7 +21,7 @@ class Left_ventrical_geometry:
 
     def set_param(self,param=None):
         """
-        Setting the parameters of the model
+        Setting the parameters of the model, if none parameters is introduced, it sets the default.
         """
         
         if param:
@@ -32,34 +35,35 @@ class Left_ventrical_geometry:
 
 
     def set_mesh(self,mesh_path=None):
-        
+        """
+        Create the mesh for the geometry, the mesh design to represent the left ventrical
+        """
 
         self.mesh = Mesh()
-
-        if mesh_path:
-            try:
-                f = XDMFFile(self.mesh.mpi_comm(),mesh_path)
-                f.read(self.mesh)
-                f.close()
-            except exception as e:
-                print(e)
-        else:
-            f = XDMFFile(self.mesh.mpi_comm(),"Files/pressure_mesh.xdmf")
-            f.read(self.mesh)
-            f.close()
+        
+        f = XDMFFile(self.mesh.mpi_comm(),"Files/pressure_mesh.xdmf")
+        f.read(self.mesh)
+        f.close()
 
 
-    def set_markers(self):
+    def set_markers(self,markers=None):
+        """
+        Creates the markers for the left ventrical, this is where the blood will be introduced.
+        """
 
-        self.markers = MeshFunction("size_t",self.mesh,"Files/pressure_markers.xml")
+        if markers:
+            self.markers = MeshFunction("size_t",self.mesh,markers)
+        else: 
+            self.markers = MeshFunction("size_t",self.mesh,"Files/pressure_markers.xml")
 
-    def set_applied_pressure(self,path=None,unit = 'mmHg'):
+        def set_applied_pressure(self,path=None,unit=None):
         """
         Sets the pressure to be aplied as a boundry condition to the geometry
         """
 
         if path is None:
             path = "Files/coronary_pressure.csv"
+            unit = 'mmHg'
 
         df = pd.read_csv(path,names=['ti','pre'])
         self.timesteps = np.array(df['ti'])
